@@ -39,7 +39,7 @@ public class Cliente {
 
 	@Override
 	public String toString() {
-		return "El cliente " + nombre + " identificado con cédula " + cedula;
+		return "El cliente " + nombre + " identificado con cédula " + cedula + " tiene los siguientes productos:\n";
 	}
 	
 }

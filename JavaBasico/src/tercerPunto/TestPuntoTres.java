@@ -2,6 +2,7 @@ package tercerPunto;
 
 import java.util.Scanner;
 
+
 public class TestPuntoTres {
 
 	public static void main(String[] args) {
@@ -9,6 +10,7 @@ public class TestPuntoTres {
 		Usuario clienteNuevo = new Usuario();
 		boolean condicion = true;
 		boolean condicionC = true;
+		boolean condicionP = true;
 		String opcion;
 		int cont = 0;
 		
@@ -20,12 +22,15 @@ public class TestPuntoTres {
 			switch(opcion) {
 				case "a":
 					do {
+						condicionC = true;
 						System.out.println("a. Añadir nuevo cliente \n"
 								+ "b. Borrar un cliente \n"
 								+ "c. Buscar un cliente \n"
-								+ "d. Mostrar un cliente \n"
+								+ "d. Mostrar Clientes \n"
 								+ "e. Modificar un cliente \n"
-								+ "f. Agregar un Productoa \n"
+								+ "f. Agregar un Producto \n"
+								+ "g. Aplicar decuento \n"
+								+ "h. Menu anterior \n"
 								+ "Escoge una opcion");			
 						opcion = sc.next().toLowerCase();			
 						System.out.println(" ");
@@ -36,10 +41,10 @@ public class TestPuntoTres {
 						
 							case "a":
 								try {					
-									System.out.println("Ingrese su nombre");
+									System.out.println("Ingrese el nombre del cliente");
 									String nombre = sc.next();
 									System.out.println(" ");						
-									System.out.println("Ingrese su numero de Documento");
+									System.out.println("Ingrese numero de Documento del cliente");
 									int documento = Integer.parseInt(sc.next());
 									System.out.println(" ");
 									Cliente cliente = new Cliente(nombre,documento);											
@@ -61,12 +66,10 @@ public class TestPuntoTres {
 							case "b":					
 								try {						
 									System.out.println("Ingrese el documento del cliente que desea borrar");
-									int documento = Integer.parseInt(sc.next());
-									System.out.println(" ");						
+									int documento = Integer.parseInt(sc.next());						
 									clienteNuevo.borrarCliente(documento);					
 									break;						
 								}catch(Exception e) {		
-									System.out.println(" ");
 									System.out.println("Valor invalido");
 									System.out.println(" ");
 									break;
@@ -79,7 +82,6 @@ public class TestPuntoTres {
 									clienteNuevo.buscarCliente(documento);					
 									break;
 								}catch(Exception e) {
-									System.out.println(" ");
 									System.out.println("Valor invalido");
 									System.out.println(" ");
 									break;
@@ -87,13 +89,9 @@ public class TestPuntoTres {
 								
 								
 							case "d":
-								try {
-									clienteNuevo.imprimir();
-									System.out.println(" ");						
-									break;
-								}catch(Exception e){
-									break;
-								}
+								clienteNuevo.imprimir();
+								System.out.println(" ");						
+								break;
 							
 							case "e":
 								try {
@@ -104,18 +102,26 @@ public class TestPuntoTres {
 									clienteNuevo.modificarCLiente(documento, nombre);
 									break;
 								}catch(Exception e) {
+									System.out.println("Valor invalido");
+									System.out.println(" ");
 									break;
 								}
 							
 							case "f":
-								System.out.println("Digite el documento del cliente");
-								int documento = Integer.parseInt(sc.next());
-								System.out.println("Nombre del producto");
-								String nombreProducto = sc.next();
-								System.out.println("Cantidad de producto");
-								int cantidad = Integer.parseInt(sc.next());
-								clienteNuevo.agregarProducto(documento,nombreProducto,cantidad);
-								break;
+								try {
+									System.out.println("Digite el documento del cliente");
+									int documento = Integer.parseInt(sc.next());
+									System.out.println("Nombre del producto");
+									String nombreProducto = sc.next();
+									System.out.println("Cantidad de producto");
+									int cantidad = Integer.parseInt(sc.next());
+									clienteNuevo.agregarProducto(documento,nombreProducto,cantidad);
+									break;
+								}catch(Exception e) {
+									System.out.println("Valor invalido");
+									System.out.println(" ");
+									break;
+								}								
 								
 							case "g":
 								clienteNuevo.aplicarDescuento();
@@ -123,6 +129,7 @@ public class TestPuntoTres {
 							
 							case "h":
 								condicionC = false;
+								break;
 								
 							default:
 								System.out.println("La opcion elegida no existe");
@@ -132,25 +139,46 @@ public class TestPuntoTres {
 					break;
 					
 				case "b":
-					System.out.println("a. Añadir \n"
-							+ "b. Borrar \n"
-							+ "Escoge una opcion");			
-					opcion = sc.next().toLowerCase();
-					switch(opcion) {
-						case "a":
-							try {
+					do {
+						condicionP = true;
+						System.out.println("a. Añadir \n"
+								+ "b. Borrar \n"
+								+ "c. Menu anterior \n"
+								+ "Escoge una opcion");			
+						opcion = sc.next().toLowerCase();
+						switch(opcion) {
+							case "a":
+								try {
+									System.out.println("Digite el nombre del producto");
+									String nombre = sc.next();
+									System.out.println(" ");
+									System.out.println("Digite el valor unitario del producto");
+									double valorUnitario = Integer.parseInt(sc.next());
+									System.out.println(" ");
+									Producto productoTienda = new Producto(nombre,valorUnitario);
+									clienteNuevo.agregarProductoTienda(productoTienda);
+									break;
+								}catch(Exception e) {
+									System.out.println("Valor invalido");
+									System.out.println(" ");
+									break;
+								}
+								
+							case "b":
 								System.out.println("Digite el nombre del producto");
 								String nombre = sc.next();
-								System.out.println(" ");
-								System.out.println("Digite el valor unitario del producto");
-								double valorUnitario = Integer.parseInt(sc.next());
-								System.out.println(" ");
-								Producto productoTienda = new Producto(nombre,valorUnitario);
-								clienteNuevo.agregarProductoTienda(productoTienda);
-							}catch(Exception e) {
+								clienteNuevo.borrarProductoTienda(nombre);
 								break;
-							}
-					}
+								
+							case "c":
+								condicionP = false;
+								break;
+								
+							default:
+								System.out.println("La opcion elegida no existe");
+								System.out.println(" ");
+						}
+					}while(condicionP);
 					break;
 					
 				case "c":

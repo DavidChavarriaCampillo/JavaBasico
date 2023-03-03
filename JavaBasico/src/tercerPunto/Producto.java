@@ -21,9 +21,6 @@ public class Producto {
 	public Producto(String nombre,double valorUnitario) {
 		this.nombre = nombre;
 		this.valorUnitario = valorUnitario;
-		this.iva = iva*valorUnitario;
-		this.valorSinIVA = (valorSinIVA*valorUnitario)+valorUnitario;
-		this.valorTotal = valorSinIVA + iva;
 	}
 	
 	public int getCantidad() {
@@ -76,7 +73,9 @@ public class Producto {
 
 	@Override
 	public String toString() {
-		return "tiene los siguientes productos: \n nombre: " + nombre + ", Cantidad=" + cantidad + ", valorUnitario=" + valorUnitario + ", valorSinIVA=" + valorSinIVA
-				+ ", valorTotal=" + valorTotal + ", iva=" + iva;
+		return "Nombre: " + nombre 
+				+ ", Cantidad:" + cantidad + ", valor unitario: " + valorUnitario 
+				+ ", valor sin Iva: " + valorSinIVA
+				+ ", valor total: " + valorTotal + ", Iva: " + iva + "\n";
 	}
 }

@@ -24,25 +24,25 @@ public class Usuario {
 	}
 	
 	public void borrarCliente(int documento) {
-		boolean existe = ListClientes.stream().anyMatch(e -> e.getCedula() == documento);
-		if(existe) {
-			ListClientes.stream().forEach(cliente ->{
-				if(cliente.getCedula() == documento) {
-					ListClientes.remove(cliente);
-				}
-			});
-			System.out.println("Cliente eliminado");
+		if(ListClientes.stream().anyMatch(e -> e.getCedula() == documento)) {
+			ListClientes.stream().filter(cliente -> cliente.getCedula() == documento).map(cliente ->{
+				ListClientes.remove(cliente);
+				System.out.println("Cliente eliminado");
+				System.out.println(" ");
+				return cliente;
+			}).collect(Collectors.toList());			
 		}else {
 			System.out.println("El cliente que desea borrar no existe");
+			System.out.println(" ");
 		}			
 	}
 	
 	public void buscarCliente(int documento) {
-		boolean existe = ListClientes.stream().anyMatch(e -> e.getCedula() == documento);
-		if(existe) {
+		if(ListClientes.stream().anyMatch(e -> e.getCedula() == documento)) {
 			ListClientes.stream().forEach(cliente ->{
 				if(cliente.getCedula() == documento) {
 					System.out.println(cliente.toString() + cliente.getProductos().toString());
+					System.out.println(" ");
 				}
 			});
 		}
@@ -50,17 +50,23 @@ public class Usuario {
 	
 	public void imprimir() {
 		ListClientes.stream().forEach(cliente ->{
-			int cont = 0;
-			String mensaje2 = "";
-			String mensaje = "Cliente " + cliente.getNombre()
-			+ " con cedula " + cliente.getCedula()
-			+ " tiene los siguientes productos:";
-			for(Producto producto : cliente.getProductos()) {
-				mensaje2 = mensaje2 + (++cont) + " Producto: " + producto.getNombre()
-						+ " Cantidad: " + producto.getCantidad()
-						+ " ValorTotal" + producto.getValorTotal();
+			String mensaje = "";
+			if(cliente.getProductos().isEmpty()) {
+				System.out.println("Cliente " + cliente.getNombre()
+				+ " con cedula " + cliente.getCedula()
+				+ " no tiene productos agregados");
+				System.out.println(" ");
+			}else {
+				System.out.println("Cliente " + cliente.getNombre()
+				+ " con cedula " + cliente.getCedula()
+				+ " tiene los siguientes productos:\n");
+				cliente.getProductos().stream().forEach(producto ->{	
+					System.out.println("Producto: " + producto.getNombre()
+					+ " Cantidad: " + producto.getCantidad()
+					+ " ValorTotal: " + producto.getValorTotal());
+				});
+				System.out.println(" ");
 			}
-			System.out.println(mensaje + " " + mensaje2);
 		});
 	}
 	
@@ -68,6 +74,8 @@ public class Usuario {
 		if(ListClientes.stream().anyMatch(cliente -> cliente.getCedula() == documento)) {
 			ListClientes.stream().filter(cliente -> cliente.getCedula() == documento).map(cliente ->{
 				cliente.setNombre(nombre);
+				System.out.println("El nombre fue modificado exitosamente");
+				System.out.println(" ");
 				return cliente;
 			}).collect(Collectors.toList());
 		}else {
@@ -77,7 +85,9 @@ public class Usuario {
 	
 	public void agregarProducto(int documento,String nombreProducto, int cantidad) {
 		if(ProductosTienda.isEmpty()) {
+			System.out.println(" ");
 			System.out.println("La tienda no tiene productos, el usuario debe surtir");
+			System.out.println(" ");
 		}else {
 			if(ListClientes.stream().anyMatch(cliente -> cliente.getCedula() == documento) && 
 					ProductosTienda.stream().anyMatch(producto -> producto.getNombre().equals(nombreProducto))) {
@@ -85,37 +95,39 @@ public class Usuario {
 					if(cliente.getProductos().stream().anyMatch(p -> p.getNombre().equals(nombreProducto))) {
 						cliente.getProductos().stream().filter(p -> p.getNombre().equals(nombreProducto)).map(p->{
 							p.setCantidad(p.getCantidad() + cantidad);
+							p.setValorSinIVA(p.getValorUnitario()*p.getCantidad());
+							p.setValorTotal(p.getValorSinIVA()+p.getIva());
+							System.out.println("Se sumaron los productos a los que ya tenia");
+							System.out.println(" ");
 							return p;
 						}).collect(Collectors.toList());
 					}else {
-						ProductosTienda.stream().forEach(producto ->{
+						ProductosTienda.stream().filter(producto -> producto.getNombre().equals(nombreProducto))
+						.map(producto ->{
 							Producto p = new Producto(nombreProducto,cantidad);
-							p.setIva(producto.getIva());
-							p.setValorSinIVA(producto.getValorSinIVA());
-							p.setValorTotal(producto.getValorTotal());
+							p.setIva(producto.getIva()*producto.getValorUnitario());
+							p.setValorSinIVA(producto.getValorUnitario()*cantidad);
+							p.setValorTotal(p.getValorSinIVA()+p.getIva());
 							p.setValorUnitario(producto.getValorUnitario());
 							cliente.setProductos(p);
-						});
+							System.out.println("Producto agregado");
+							System.out.println(" ");
+							return producto;
+						}).collect(Collectors.toList());
 					}
 					return cliente;
 				}).collect(Collectors.toList());
 			}else {
-				System.out.println("El documento o el producto no existen el usuario lo debe agregar el o el producto");
+				System.out.println("El documento o el producto no existen el usuario lo debe agregar el cliente o el producto");
+				System.out.println(" ");
 			}
 		}
-		
-		/*for(Cliente cliente : ListClientes) {
-			if(cliente.getCedula() == documento) {
-				Producto p = separarProducto(nombreProducto, cantidad);
-				cliente.setProductos(p);
-				break;
-			}
-		}*/
 	}
 	
 	public void agregarProductoTienda(Producto porducto) {
 		if(ProductosTienda.stream().anyMatch(p -> p.getNombre().equals(porducto.getNombre()))){
 			System.out.println("El producto ya existe");
+			System.out.println(" ");
 		}else {
 			ProductosTienda.add(porducto);
 		}
@@ -133,24 +145,36 @@ public class Usuario {
 	}
 	
 	public void aplicarDescuento() {
-		
-	}
-	
-	/*private Producto separarProducto(String nombreProducto, int cantidad) {
-		Producto p = new Producto();
-		for(Producto producto : ProductosTienda) {
-			String t = producto.getNombre();
-			System.out.println(t);
-			if(producto.getNombre().equals(nombreProducto)) {
-				p.setNombre(nombreProducto);
-				p.setCantidad(cantidad);
-				p.setIva(producto.getIva());
-				p.setValorSinIVA(producto.getValorSinIVA());
-				p.setValorTotal(producto.getValorTotal());
-				p.setValorUnitario(producto.getValorUnitario());
-				return p;
+		List<Producto> descuento = new ArrayList<>();	
+		ListClientes.stream().forEach(cliente ->{
+			if(cliente.getProductos().stream().anyMatch(producto -> producto.getCantidad() > 6) &&
+					cliente.getProductos().stream().anyMatch(producto -> producto.getValorTotal() > 200000)) {
+				cliente.getProductos().stream().filter(producto -> producto.getCantidad() > 6)
+				.filter(producto -> producto.getValorTotal() > 200000).map(producto ->{
+					Producto p = new Producto();
+					p.setNombre(producto.getNombre());
+					p.setCantidad(producto.getCantidad());
+					p.setIva(producto.getIva());
+					p.setValorUnitario(producto.getValorUnitario());
+					p.setValorSinIVA(producto.getValorSinIVA());
+					p.setValorTotal((producto.getValorTotal()-(producto.getValorTotal()*0.1)));
+					descuento.add(p);
+					return producto;
+				}).collect(Collectors.toList());
+				System.out.println("Cliente " + cliente.getNombre()
+				+ " con cedula " + cliente.getCedula()
+				+ " tiene los siguientes productos:");
+				descuento.stream().forEach(producto ->{
+					System.out.println("Producto: " + producto.getNombre()
+					+ " Cantidad: " + producto.getCantidad()
+					+ " ValorTotal: " + producto.getValorTotal());
+					System.out.println();
+				});
+			}else {
+				System.out.println("El cliente " + cliente.getNombre() + " no tiene descuento");
+				System.out.println(" ");
 			}
-		}
-		return p;
-	}*/
+			
+		});
+	}
 }
