@@ -144,8 +144,31 @@ public class Usuario {
 		}
 	}
 	
-	public void aplicarDescuento() {
-		List<Producto> descuento = new ArrayList<>();	
+	public void aplicarDescuento() {	
+		ListClientes.stream().forEach(cliente ->{
+			if(cliente.getProductos().stream().anyMatch(producto -> producto.getCantidad() > 6) &&
+					cliente.getProductos().stream().anyMatch(producto -> producto.getValorTotal() > 200000)) {
+				cliente.getProductos().stream().filter(producto -> producto.getCantidad() > 6)
+				.filter(producto -> producto.getValorTotal() > 200000).map(producto ->{
+					producto.setValorTotal((producto.getValorTotal()-(producto.getValorTotal()*0.1)));
+					return producto;
+				}).collect(Collectors.toList());
+				System.out.println("Cliente " + cliente.getNombre()
+				+ " con cedula " + cliente.getCedula()
+				+ " tiene los siguientes productos:");
+				System.out.println();
+				cliente.getProductos().stream().forEach(p ->{
+					System.out.println("Producto: " + p.getNombre()
+					+ " Cantidad: " + p.getCantidad()
+					+ " ValorTotal: " + p.getValorTotal());
+				});
+			}else {
+				System.out.println("El cliente " + cliente.getNombre() + " no tiene descuento");
+				System.out.println(" ");
+			}
+			
+		});
+		/*List<Producto> descuento = new ArrayList<>();	
 		ListClientes.stream().forEach(cliente ->{
 			if(cliente.getProductos().stream().anyMatch(producto -> producto.getCantidad() > 6) &&
 					cliente.getProductos().stream().anyMatch(producto -> producto.getValorTotal() > 200000)) {
@@ -175,6 +198,6 @@ public class Usuario {
 				System.out.println(" ");
 			}
 			
-		});
+		});*/
 	}
 }
